@@ -1,0 +1,285 @@
+{
+  "collections": {
+    "users": {
+      "description": "User profiles and account information",
+      "fields": {
+        "email": "string",
+        "displayName": "string",
+        "photoURL": "string",
+        "role": "string (patient|doctor|admin)",
+        "isActive": "boolean",
+        "profile": {
+          "firstName": "string",
+          "lastName": "string",
+          "phone": "string",
+          "dateOfBirth": "timestamp",
+          "gender": "string",
+          "age": "number",
+          "medicalHistory": "array",
+          "specialization": "string (for doctors)",
+          "licenseNumber": "string (for doctors)",
+          "hospital": "string (for doctors)",
+          "experience": "number (for doctors)"
+        },
+        "preferences": {
+          "language": "string (ar|en)",
+          "notifications": "boolean",
+          "theme": "string (light|dark)"
+        },
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    },
+    "conversations": {
+      "description": "AI chat conversations between users and AI assistants",
+      "fields": {
+        "userId": "string (user ID)",
+        "doctorId": "string (optional, for doctor consultations)",
+        "sessionId": "string (unique session identifier)",
+        "portal": "string (wellness|assist|patient_assist)",
+        "title": "string",
+        "messages": "array of message objects",
+        "context": {
+          "medicalHistory": "array",
+          "currentSymptoms": "array",
+          "urgencyLevel": "string (low|medium|high|emergency)",
+          "patientAge": "number",
+          "patientGender": "string",
+          "relevantConditions": "array",
+          "specialty": "string"
+        },
+        "summary": "string",
+        "recommendations": "array",
+        "followUpActions": "array",
+        "isActive": "boolean",
+        "rating": "number (1-5)",
+        "feedback": "string",
+        "tags": "array",
+        "language": "string (ar|en)",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "subcollections": {
+        "messages": {
+          "description": "Individual messages within a conversation",
+          "fields": {
+            "role": "string (user|assistant|system)",
+            "content": "string",
+            "timestamp": "timestamp",
+            "metadata": {
+              "confidence": "number",
+              "sources": "array",
+              "processingTime": "number",
+              "tokens": "number",
+              "model": "string",
+              "needsReview": "boolean",
+              "reviewStatus": "string",
+              "reviewedBy": "string",
+              "reviewedAt": "timestamp",
+              "reviewFeedback": "string"
+            }
+          }
+        }
+      }
+    },
+    "medical_records": {
+      "description": "Patient medical records and history",
+      "fields": {
+        "patientId": "string",
+        "doctorId": "string (optional)",
+        "type": "string (consultation|diagnosis|prescription|test_result)",
+        "title": "string",
+        "description": "string",
+        "diagnosis": "array",
+        "medications": "array",
+        "allergies": "array",
+        "vitals": {
+          "bloodPressure": "string",
+          "heartRate": "number",
+          "temperature": "number",
+          "weight": "number",
+          "height": "number"
+        },
+        "attachments": "array",
+        "icdCodes": "array",
+        "isPrivate": "boolean",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    },
+    "appointments": {
+      "description": "Video consultation appointments",
+      "fields": {
+        "patientId": "string",
+        "doctorId": "string",
+        "scheduledTime": "timestamp",
+        "duration": "number (minutes)",
+        "type": "string (consultation|follow_up|emergency)",
+        "status": "string (scheduled|in_progress|completed|cancelled)",
+        "roomId": "string (video call room ID)",
+        "notes": "string",
+        "prescription": "string",
+        "followUpRequired": "boolean",
+        "followUpDate": "timestamp",
+        "rating": "number (1-5)",
+        "feedback": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    },
+    "video_sessions": {
+      "description": "Active video call sessions",
+      "fields": {
+        "roomId": "string",
+        "patientId": "string",
+        "doctorId": "string",
+        "startTime": "timestamp",
+        "endTime": "timestamp",
+        "duration": "number (seconds)",
+        "participants": "array",
+        "recordingUrl": "string (optional)",
+        "chatLog": "array",
+        "status": "string (active|ended)",
+        "createdAt": "timestamp"
+      }
+    },
+    "analytics": {
+      "description": "System analytics and metrics",
+      "fields": {
+        "type": "string (ai_response|user_action|system_event)",
+        "conversationId": "string (optional)",
+        "userId": "string (optional)",
+        "portal": "string (wellness|assist|patient_assist)",
+        "confidence": "number",
+        "tokens": "number",
+        "processingTime": "number",
+        "metadata": "object",
+        "timestamp": "timestamp"
+      }
+    },
+    "daily_reports": {
+      "description": "Daily analytics reports",
+      "fields": {
+        "date": "timestamp",
+        "metrics": {
+          "totalAIResponses": "number",
+          "averageConfidence": "number",
+          "averageProcessingTime": "number",
+          "totalTokensUsed": "number",
+          "wellnessPortalUsage": "number",
+          "assistPortalUsage": "number",
+          "totalUsers": "number",
+          "activeUsers": "number",
+          "newUsers": "number",
+          "totalAppointments": "number",
+          "completedAppointments": "number"
+        },
+        "timestamp": "timestamp"
+      }
+    },
+    "notifications": {
+      "description": "User notifications",
+      "fields": {
+        "userId": "string",
+        "type": "string (appointment_reminder|ai_response_ready|system_update)",
+        "title": "string",
+        "message": "string",
+        "data": "object (additional data)",
+        "isRead": "boolean",
+        "createdAt": "timestamp",
+        "readAt": "timestamp"
+      }
+    },
+    "feedback": {
+      "description": "User feedback and ratings",
+      "fields": {
+        "userId": "string",
+        "type": "string (ai_response|video_call|general)",
+        "rating": "number (1-5)",
+        "comment": "string",
+        "category": "string",
+        "relatedId": "string (conversation ID, appointment ID, etc.)",
+        "isAnonymous": "boolean",
+        "createdAt": "timestamp"
+      }
+    },
+    "medical_knowledge": {
+      "description": "Medical knowledge base and protocols",
+      "fields": {
+        "title": "string",
+        "category": "string",
+        "specialty": "string",
+        "content": "string",
+        "icdCodes": "array",
+        "keywords": "array",
+        "references": "array",
+        "lastUpdated": "timestamp",
+        "version": "string",
+        "isActive": "boolean"
+      }
+    },
+    "system_config": {
+      "description": "System configuration and settings",
+      "fields": {
+        "key": "string",
+        "value": "any",
+        "description": "string",
+        "updatedBy": "string",
+        "updatedAt": "timestamp"
+      }
+    }
+  },
+  "indexes": [
+    {
+      "collection": "conversations",
+      "fields": [
+        {"field": "userId", "order": "ascending"},
+        {"field": "createdAt", "order": "descending"}
+      ]
+    },
+    {
+      "collection": "conversations", 
+      "fields": [
+        {"field": "portal", "order": "ascending"},
+        {"field": "isActive", "order": "ascending"}
+      ]
+    },
+    {
+      "collection": "medical_records",
+      "fields": [
+        {"field": "patientId", "order": "ascending"},
+        {"field": "createdAt", "order": "descending"}
+      ]
+    },
+    {
+      "collection": "appointments",
+      "fields": [
+        {"field": "patientId", "order": "ascending"},
+        {"field": "scheduledTime", "order": "ascending"}
+      ]
+    },
+    {
+      "collection": "appointments",
+      "fields": [
+        {"field": "doctorId", "order": "ascending"},
+        {"field": "scheduledTime", "order": "ascending"}
+      ]
+    },
+    {
+      "collection": "analytics",
+      "fields": [
+        {"field": "type", "order": "ascending"},
+        {"field": "timestamp", "order": "descending"}
+      ]
+    },
+    {
+      "collection": "notifications",
+      "fields": [
+        {"field": "userId", "order": "ascending"},
+        {"field": "isRead", "order": "ascending"},
+        {"field": "createdAt", "order": "descending"}
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Users can read and write their own conversations
+    match /conversations/{conversationId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.doctorId);
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Users can read and write their own medical records
+    match /medical_records/{recordId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.data.patientId || 
+         request.auth.uid == resource.data.doctorId);
+      allow create: if request.auth != null;
+    }
+    
+    // Appointments can be read and written by involved parties
+    match /appointments/{appointmentId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.data.patientId || 
+         request.auth.uid == resource.data.doctorId);
+      allow create: if request.auth != null;
+    }
+    
+    // Doctors can read patient queries assigned to them
+    match /patient_queries/{queryId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        request.auth.token.role == 'doctor';
+    }
+    
+    // System analytics (read-only for authenticated users)
+    match /analytics/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only server-side writes
+    }
+    
+    // Public medical knowledge base (read-only)
+    match /medical_knowledge/{document=**} {
+      allow read: if true;
+      allow write: if false; // Only admin writes
+    }
+    
+    // Chat messages within conversations
+    match /conversations/{conversationId}/messages/{messageId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+    }
+    
+    // Video call sessions
+    match /video_sessions/{sessionId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.data.patientId || 
+         request.auth.uid == resource.data.doctorId);
+      allow create: if request.auth != null;
+    }
+    
+    // Feedback and ratings
+    match /feedback/{feedbackId} {
+      allow read: if request.auth != null && 
+        request.auth.token.role == 'doctor';
+      allow create, update: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId;
+    }
+    
+    // System notifications
+    match /notifications/{notificationId} {
+      allow read, update: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+      allow create: if false; // Only server-side creates
+    }
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isDoctor() {
+      return request.auth.token.role == 'doctor';
+    }
+    
+    function isPatient() {
+      return request.auth.token.role == 'patient';
+    }
+    
+    function isAdmin() {
+      return request.auth.token.role == 'admin';
+    }
+  }
+}
+
