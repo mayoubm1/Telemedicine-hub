@@ -31,7 +31,7 @@
     "openai": "^4.20.0",
     "multer": "^2.0.2",
     "sharp": "^0.32.6",
-    "uuid": "^9.0.1",
+    "uuid": "^14.0.0",
     "node-cron": "^3.0.3"
   },
   "devDependencies": {
